@@ -15,6 +15,21 @@ app.post("/sign-up", (req, res) => {
     const newUsers = { username, avatar }
 
     users.push(newUsers)
+    console.log(users)
+    res.send("OK")
+})
+
+app.post("/tweets", (req, res) => {
+    const { username, tweet } = req.body
+
+    if (!users.find((user) => user.username === username)) {
+        return res.status(401).send("UNAUTHORIZED")
+    }
+
+    const newTweets = { username, tweet }
+
+    tweets.push(newTweets)
+    console.log(tweets)
     res.send("OK")
 })
 
