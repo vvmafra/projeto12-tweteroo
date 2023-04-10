@@ -7,7 +7,8 @@ app.use(cors())
 app.use(express.json())
 
 const users = []
-const tweets = []
+const tweeteros = []
+
 
 app.post("/sign-up", (req, res) => {
     const { username, avatar } = req.body
@@ -15,27 +16,39 @@ app.post("/sign-up", (req, res) => {
     const newUsers = { username, avatar }
 
     users.push(newUsers)
-    console.log(users)
     res.send("OK")
 })
 
 app.post("/tweets", (req, res) => {
-    const { username, tweet } = req.body
+    const { username, tweet } = req.body;
+    const userfind = users.find((u) => u.username === username);
 
-    if (!users.find((user) => user.username === username)) {
+    if (!userfind) {
         return res.status(401).send("UNAUTHORIZED")
     }
 
-    const newTweets = { username, tweet }
+    const newTweets = { userfind, tweet }
 
-    tweets.push(newTweets)
-    console.log(tweets)
-    res.send("OK")
-})
+    tweeteros.push(newTweets);
+    res.send("OK");
+  });
 
-// app.get("", (req, res) => {
-//     res.send()
-// })
+app.get("/tweets", (req, res) => {
+
+    let last10Tweets = [];
+    const lastestTweets = [];
+
+    last10Tweets = tweeteros.slice(-10).reverse();
+     
+    last10Tweets.map((l) => {
+      lastestTweets.push({
+        username: l.userfind.username,
+        avatar: l.userfind.avatar,
+        tweet: l.tweet,
+      });
+    });
+    res.send(lastestTweets);
+  });
 
 const PORT = 5000
 app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`))
